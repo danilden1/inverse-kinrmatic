@@ -5,10 +5,10 @@ clc;
 
 
 %%
-l1 = 20;
-l2 = 30;
-l3 = 30;
-l4 = 15;
+l1 = 0.2;
+l2 = 0.3;
+l3 = 0.3;
+l4 = 0.15;
 l5 = 0.1;
 
 
@@ -22,7 +22,7 @@ s = theta;
 al = alpha;
 
 x = 0.0;
-y = 75;
+y = 0.75;
 z = 0;
 p = 0;
 r = 0;
@@ -37,8 +37,8 @@ type = ['r','r','r','r','r','r'];
 base = [0; 0; 0];
 
 % See http://medesign.seas.upenn.edu/index.php/Courses/MEAM520-12C-P01-IK
-lb = [deg2rad(-360); deg2rad(-360); deg2rad(-360); deg2rad(-360); deg2rad(-360); deg2rad(1)];
-ub = [deg2rad(360); deg2rad(360); deg2rad(360); deg2rad(360); deg2rad(360); deg2rad(-1)];
+lb = [deg2rad(-180); deg2rad(-75); deg2rad(-236); deg2rad(-580); deg2rad(-120); deg2rad(1)];
+ub = [deg2rad(110); deg2rad(240); deg2rad(60); deg2rad(40); deg2rad(110); deg2rad(-1)];
 puma = cgr_create(theta, d, a, alpha, offset, type, base, ub, lb);
     puma = cgr_self_update(puma, theta);
     g = ncgr_plot(g, puma);
@@ -47,17 +47,17 @@ while 1
        in = 'axis';
     q = input(in);
     if q == 8 
-        x = x + 0.5;
+        x = x + 0.05;
     elseif q == 2 
-        x = x - 0.5;
+        x = x - 0.05;
     elseif q == 6 
-        y = y + 0.5;
+        y = y + 0.05;
     elseif q == 4 
-        y = y - 0.5;
+        y = y - 0.05;
     elseif q ==  9
-        z = z + 0.5;
+        z = z + 0.05;
     elseif q == 7 
-        z = z - 0.5;
+        z = z - 0.05;
     elseif q == 1 
         p = p + 0.05;
     elseif q == 3 
@@ -67,8 +67,6 @@ while 1
     elseif q == 0 
         r = r - 0.05;
     end
-    
-    pos1 = [x, y, z, r, p]
     s = [0 0 0 0 0];
     s(5) = r
     
@@ -80,19 +78,14 @@ while 1
     Q23 = sqrt(H23^2 + L23^2)
     alpha = acos((L23^2 + Q23^2 - H23^2)/(2 * L23 * Q23))
     betta = acos((Q23^2 + l2^2 - l3^2)/(2 * Q23 * l2))
-     if H23 <= 0
-       s(2) = -alpha - betta
-    else 
-        s(2) =  -betta + alpha
-    end
-    
+    s(2) = -alpha - betta
     
     H34 = l2 * sin(s(2)) - z
     L34 = L - l2 * cos(s(2))
     Q34 = sqrt(L34^2 + H34^2)
     psi = acos((l3^2 + l4^2 - Q34^2)/(2 * l3 * l4))
-        s(4) = pi - psi
-
+    s(4) = pi - psi
+    
     gamma = acos((l2^2 + l3^2 - Q23^2)/(2 * l2 * l3))
     s(3) = pi - gamma
 
@@ -102,7 +95,7 @@ rad2deg(s)
 theta(1) = s(1) + pi/2;
 theta(2) = -s(2);
 theta(3) = -s(3);
-theta(4) = s(4) - pi / 2;
+theta(4) = s(4) - pi;
 theta(5) = s(5);
 theta(6) = pi/2;
 rad2deg(theta)
@@ -156,7 +149,7 @@ rad2deg(theta)
     g = ncgr_plot(g, puma);
     rad2deg(theta)
     
-
+pos1 = [x, y, z, r, p]
 %pos2 = [T(1, 4) T(2, 4) T(3, 4) eul]
 
 end
